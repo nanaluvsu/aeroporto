@@ -1,23 +1,31 @@
 #include "tipos.h"
 
 #pragma once
-typedef unsigned int UI32;
 
-typedef struct node_t
+typedef struct node
 {
   const char* sigla;
-  UI32 codigo;
-} Node;
+  U32 codigo;
+} Node; //aeroporto
 
-typedef struct grafo_t
+typedef struct grafo
 {
-  UI32 total_nodes;
-  UI32 conta_nodes;
-  UI32** matriz_adjacencia;
+  U32 total_nodes;
+  U32 qtd_nodes;
+  U32** matriz_adjacencia;
   Node* nodes;
 } Grafo;
 
+
+typedef struct relacionamento
+{
+  U32 origem;
+  U32 destino;
+} Relacionamento;
+
+
+
 Grafo*   criar_grafo();
-bool     adicionar_node(Grafo* grafo,   const char* sigla, UI32 codigo);
-bool     adicionar_aresta (Grafo* grafo, UI32 origem, UI32 destino);
-UI32     busca_node (Grafo* grafo, const char* sigla);
+bool     adicionar_node(Grafo* grafo, char* sigla, U32 codigo);
+bool     adicionar_relacionamento (Grafo* grafo, U32 origem, U32 destino);
+U32     busca_node (Grafo* grafo, char* sigla);

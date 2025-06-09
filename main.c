@@ -14,9 +14,10 @@ int main() {
 
     printf("Escolha uma opção:\n");
     printf("[1] Registrar novo aeroporto;\n");
-    printf("[2] Registrar nova rota entre aeroportos;\n");
-    printf("[3] Listar rotas que partem de um aeroporto;\n");
-    printf("[4] Listar possíveis trajetos que passam por um aeroporto;\n"); //não apenas chegar no aeroporto, mas também passar por ele
+    printf("[2] Registrar novo voo entre aeroportos;\n"); //através do número do voo e dos códigos dos aeroportos de origem e destino
+    printf("[3] Remover voo;\n"); //através do número
+    printf("[4] Listar voos que partem de um aeroporto;\n"); //listar número e nome da cidade de destino
+    printf("[5] Listar possíveis trajetos que passam por um aeroporto;\n"); //não apenas chegar no aeroporto, mas também passar por ele
     printf("[0] Sair.\n");
 
     int op;
@@ -27,13 +28,16 @@ int main() {
         /* Reg aeroporto */
         break;
     case 2:
-        /* Reg rota */
+        /* Reg voo */
         break;
     case 3:
-        /* Listar rotas */
+        /* Remover voo */
         break;
     case 4:
-        /* Listar trajetos */
+        /* Listar voos partindo */
+        break;
+    case 5:
+        /* Listar voos passando */
         break;
     case 0:
         exit(0);
