@@ -33,7 +33,7 @@ int main() {
         {
         case 1:
             printf("Registro de aeroporto\n\n"); 
-            U8 sigla[4];
+            U8 sigla[3];
             U32 codigo;
             printf("Digite a sigla do aeroporto: ");
             scanf("%s", sigla);
@@ -53,15 +53,26 @@ int main() {
             scanf("%u", &origem);
             printf("Digite o codigo do aeroporto de destino: ");
             scanf("%u", &destino);
-            if (adicionar_rel(grafo, origem, destino)) {
+            U32 id = 0;
+            Relacionamento rel = {id, origem, destino};
+            if (adicionar_rel(grafo, rel)) {
                 printf("ta tendo :3\n");
-                listaVoos(grafo);
             } else {
                 printf("noggers\n");
             }
             break;
         case 3:
-            /* Remover voo */
+           printf("Remoção de voo\n\n");
+           printf("Digite o codigo do voo a ser removido: ");
+              scanf("%u", &codigo);
+            Relacionamento remover = {0, 
+                codigo,
+                 0}; 
+            if (remove_rel(grafo, remover)) {
+                printf("comi");
+            } else {
+                printf("nao existe explodiu");
+            }
             break;
         case 4:
             /* Listar voos partindo */

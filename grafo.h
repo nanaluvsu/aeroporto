@@ -19,6 +19,7 @@ typedef struct grafo
 
 typedef struct relacionamento
 {
+  U32 id;
   U32 origem;
   U32 destino;
 } Relacionamento;
@@ -27,6 +28,6 @@ typedef struct relacionamento
 
 Grafo* criar_grafo();
 bool adicionar_node(Grafo* grafo, char* sigla, U32 codigo);
-bool adicionar_rel(Grafo* grafo, U32 origem, U32 destino);
+bool adicionar_rel(Grafo* grafo, Relacionamento rel);
 bool busca_og(Grafo* grafo, U32 origem); //voos que partem de um aeroporto
 bool busca_dt(Grafo* grafo, U32 origem, U32 destino); //voos que chegam a um aeroporto
