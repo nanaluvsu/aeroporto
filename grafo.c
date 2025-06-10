@@ -1,22 +1,34 @@
 #include "grafo.h"
 #include "tipos.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 Grafo *criar_grafo()
 {
+
     Grafo *grafo = (Grafo *)malloc(sizeof(Grafo));
     if (!grafo)
         return NULL;
 
-    grafo->total_nodes = 0;
+    grafo->total_nodes = 5; // define o número total de nós como 5, pois inicialmente o grafo terá 5 nós
     grafo->qtd_nodes = 0;
-    grafo->matriz_adjacencia = NULL;
+
+    // inicializa a matriz de adjacência com zeros
+    grafo->matriz_adjacencia = (U32 **)malloc(grafo->total_nodes * sizeof(U32 *));
+    for (int i = 0; i < grafo->total_nodes; i++)
+    {
+        grafo->matriz_adjacencia[i] = (U32 *)malloc(grafo->total_nodes * sizeof(U32));
+        for (int j = 0; j < grafo->total_nodes; j++)
+        {
+            grafo->matriz_adjacencia[i][j] = 0;
+        }
+    }
     grafo->nodes = NULL;
 
     return grafo;
 } // cria um grafo vazio
 
-bool adicionar_node(Grafo *grafo, char *sigla, U32 cod)
+bool adicionar_node(Grafo *grafo, char *sigla, U32 cod, char *cidade)
 {
     for (U32 i = 0; i < grafo->qtd_nodes; i++)
     {
@@ -25,57 +37,59 @@ bool adicionar_node(Grafo *grafo, char *sigla, U32 cod)
             return false;
         }
     }
-    grafo->qtd_nodes++; // incrementa a quantidade de nós do grafo
+    grafo->qtd_nodes++;                                                            // incrementa a quantidade de nós do grafo
     grafo->nodes = (Node *)realloc(grafo->nodes, grafo->qtd_nodes * sizeof(Node)); // realoca o vetor de 'nodes', definindo o tamanho dele como o número de nós que ele tem
-    if (!grafo->nodes)
-        return false; // se a realocação falhar, retorna falso(obvio)
 
-    grafo->nodes[grafo->qtd_nodes - 1].sigla = sigla; // adiciona o novo nó ao vetor de nós
-    grafo->nodes[grafo->qtd_nodes - 1].codigo = cod;  // define o código do nó
-    grafo->total_nodes++;                             // incrementa o número total de nós(antes apenas a quantidade de nós era incrementada)
+    grafo->nodes[grafo->qtd_nodes - 1].sigla = sigla;   // adiciona o novo nó ao vetor de nós
+    grafo->nodes[grafo->qtd_nodes - 1].codigo = cod;    // define o código do nó
+    grafo->nodes[grafo->qtd_nodes - 1].cidade = cidade; // define a cidade do nó
 
     // Realocação da matriz de adjacência
-    grafo->matriz_adjacencia = (U32 **)realloc(grafo->matriz_adjacencia, grafo->total_nodes * sizeof(U32 *));
+    U32 novo_total = grafo->total_nodes + 1;
+    grafo->matriz_adjacencia = (U32 **)realloc(grafo->matriz_adjacencia, novo_total * sizeof(U32 *));
     if (!grafo->matriz_adjacencia)
         return false; // se a realocação falhar, retorna falso
-    for (U32 i = 0; i < grafo->total_nodes; i++)
+    for (U32 i = 0; i < novo_total; i++)
     {
-        grafo->matriz_adjacencia[i] = (U32 *)realloc(grafo->matriz_adjacencia[i], grafo->total_nodes * sizeof(U32));
+        if (i >= grafo->total_nodes)
+        {
+            grafo->matriz_adjacencia[i] = (U32 *)malloc(novo_total * sizeof(U32));
+        }
+        else
+        {
+            grafo->matriz_adjacencia[i] = (U32 *)realloc(grafo->matriz_adjacencia[i], novo_total * sizeof(U32));
+        }
+
         if (!grafo->matriz_adjacencia[i])
             return false; // se a realocação falhar, retorna falso
+
+        for (U32 j = 0; j < novo_total; j++)
+        {
+            if (i == novo_total - 1 || j == novo_total - 1)
+            {
+                grafo->matriz_adjacencia[i][j] = 0;
+            }
+        }
     }
-    for (U32 i = 0; i < grafo->total_nodes; i++)
-    {
-        grafo->matriz_adjacencia[grafo->qtd_nodes - 1][i] = 0; // inicializa a nova linha com 0
-        grafo->matriz_adjacencia[i][grafo->qtd_nodes - 1] = 0; // inicializa a nova coluna com 0
-    }
-    return true; // se ele n morrer ele retorna true
+    grafo->total_nodes = novo_total; // incrementa o número total de nós(antes apenas a quantidade de nós era incrementada)
+    return true;                     // se ele n morrer ele retorna true
 }
 
 bool adicionar_rel(Grafo *grafo, Relacionamento rel)
 {
-    for (U32 i = 0; i < grafo->qtd_nodes; i++)
-    {
-        for (U32 j = 0; j < grafo->qtd_nodes; j++)
-        {
-            if (grafo->matriz_adjacencia[i][j] == rel.id) //checa se o id existe. Se existir, id++
-            {
-                rel.id++; 
-            }
-        }
-    }
     printf("rel.id: %u\n", rel.id); // talvez desse errado entao fiz ele mostrar o id(nao muda o codigo so serve pra testar msm)
     for (U32 i = 0; i < grafo->qtd_nodes; i++)
     {
+
         if (grafo->nodes[i].codigo == rel.origem)
         {
             for (U32 j = 0; j < grafo->qtd_nodes; j++)
             {
                 if (grafo->nodes[j].codigo == rel.destino)
                 {
-                    // existe o nó de origem e destino, então adiciona a relação
                     grafo->matriz_adjacencia[i][j] = rel.id;
                     grafo->matriz_adjacencia[j][i] = rel.id;
+                    printf("Voo %u: %s-> Destino %s\n", rel.id, grafo->nodes[i].sigla, grafo->nodes[j].sigla);
                     return true;
                 }
             }
@@ -84,7 +98,50 @@ bool adicionar_rel(Grafo *grafo, Relacionamento rel)
     return false;
 }
 
-bool busca_rel(Grafo *grafo, Relacionamento rel)
+bool busca_og(Grafo *grafo, U32 origem_codigo)
+{
+    if (!grafo || grafo->qtd_nodes == 0)
+    {
+        printf("Nenhum voo cadastrado.\n");
+        return false;
+    }
+
+    bool encontrou = false;
+    bool origem_existe = false;
+    for (U32 i = 0; i < grafo->qtd_nodes; i++)
+    {
+        if (grafo->nodes[i].codigo == origem_codigo)
+        {
+            origem_existe = true;
+            printf("Voos com origem em %s (%u):\n", grafo->nodes[i].sigla, origem_codigo);
+            for (U32 j = 0; j < grafo->qtd_nodes; j++)
+            {
+                if (grafo->matriz_adjacencia[i][j] != 0)
+                {
+                    printf("Destino: %s (%u), ID do voo: %u\n",
+                           grafo->nodes[j].sigla, grafo->nodes[j].codigo,
+                           grafo->matriz_adjacencia[i][j]);
+                    encontrou = true;
+                }
+            }
+            break;
+        }
+    }
+
+    if (!origem_existe)
+    {
+        printf("Nenhum aeroporto encontrado com o código especificado.\n");
+        return false;
+    }
+
+    if (!encontrou)
+    {
+        printf("Nenhum voo encontrado com origem no aeroporto especificado.\n");
+    }
+    return encontrou;
+}
+/*
+bool remove_rel(Grafo *grafo, Relacionamento rel)
 {
     for (U32 i = 0; i < grafo->qtd_nodes; i++)
     {
@@ -96,39 +153,18 @@ bool busca_rel(Grafo *grafo, Relacionamento rel)
                 {
                     if (grafo->matriz_adjacencia[i][j] == rel.id)
                     {
-                        printf("Relacionamento encontrado: Origem %s (%u), Destino %s (%u), ID %u\n",
-                               grafo->nodes[i].sigla, rel.origem,
-                               grafo->nodes[j].sigla, rel.destino,
-                               rel.id);
+                        grafo->matriz_adjacencia[i][j] = 0;
+                        grafo->matriz_adjacencia[j][i] = 0; // remove o voo da matriz de adjacência
+                        printf("engoli\n");
                         return true;
                     }
                 }
             }
         }
     }
-    printf("Relacionamento não encontrado.\n");
+    printf("Voo nao encontrado ou ID incorreto.\n");
     return false;
-} // busca um relacionamento específico no grafo
-
-bool remove_rel(Grafo *grafo, Relacionamento rel)
-{
-    for (U32 i = 0; i < grafo->qtd_nodes; i++)
-    {
-        if (grafo->nodes[i].codigo == rel.origem)
-        {
-            for (U32 j = 0; j < grafo->qtd_nodes; j++)
-            {
-                if (grafo->nodes[j].codigo == rel.destino)
-                {
-                    grafo->matriz_adjacencia[i][j] = 0; // define a relação como inexistente
-                    grafo->matriz_adjacencia[j][i] = 0; // define a relação como inexistente
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
-}
+}*/
 
 static void listaAeroportos(Grafo *grafo)
 {
@@ -140,11 +176,11 @@ static void listaAeroportos(Grafo *grafo)
     printf("Aeroportos:\n");
     for (U32 i = 0; i < grafo->qtd_nodes; i++)
     {
-        printf("sigla: %s, codigo: %u\n", grafo->nodes[i].sigla, grafo->nodes[i].codigo);
+        printf("sigla: %s, codigo: %u, estado: %s\n", grafo->nodes[i].sigla, grafo->nodes[i].codigo, grafo->nodes[i].cidade);
     }
 }
 
-static removerGrafo(Grafo *grafo)
+static void removerGrafo(Grafo *grafo)
 {
     if (!grafo)
         return;
@@ -156,4 +192,5 @@ static removerGrafo(Grafo *grafo)
     free(grafo->matriz_adjacencia);
     free(grafo->nodes);
     free(grafo);
+    return;
 } // função de apoio para remover o grafo (eu não quero ficar com minha memória toda xoxa :3)
