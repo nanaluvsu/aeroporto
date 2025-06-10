@@ -194,3 +194,27 @@ static void removerGrafo(Grafo *grafo)
     free(grafo);
     return;
 } // função de apoio para remover o grafo (eu não quero ficar com minha memória toda xoxa :3)
+
+// Pra remover as arestas/voos
+bool remover_rel(Grafo* grafo, U32 origem, U32 destino) {
+    if (!grafo || grafo->qtd_nodes == 0) return false; // Se o grafo não existir ou não tiver nós não faz
+
+    U32 i_origem = -1, i_destino = -1;
+
+    // Reaproveitei o for pra procurar agora os nós informados 
+    for (U32 i = 0; i < grafo->qtd_nodes; i++) {
+        if (grafo->nodes[i].codigo == origem) i_origem = i;
+        if (grafo->nodes[i].codigo == destino) i_destino = i;
+    }
+
+    // Se não encontrar um dos dois nós ele retorna falso pq nn tem o aeroporto cadastrado
+    if (i_origem == (U32)-1 || i_destino == (U32)-1) {
+        return false;
+    }
+
+    // Zera as entradas da matriz, removendo assim o voo
+    grafo->matriz_adjacencia[i_origem][i_destino] = 0;
+    grafo->matriz_adjacencia[i_destino][i_origem] = 0;
+
+    return true;
+}
