@@ -2,23 +2,25 @@
 #include <stdio.h>
 #include <locale.h>
 
-
-int main() {
+int main()
+{
     setlocale(LC_ALL, "Portuguese");
-    Grafo* grafo = criar_grafo();
-    if (!grafo) {
+    Grafo *grafo = criar_grafo();
+    if (!grafo)
+    {
         printf("Erro ao criar o grafo.\n");
         return 1;
     }
     printf("Estrutura e Recuperacao de Dados II\nTrabalho de Grafos.\n\n");
-    adicionar_node(grafo, "GRU", 1, "Sao Paulo"); // adicionando aeroportos eba(esse é de SP)
+    adicionar_node(grafo, "GRU", 1, "Sao Paulo");      // adicionando aeroportos eba(esse é de SP)
     adicionar_node(grafo, "GIG", 2, "Rio de Janeiro"); // RJ
-    adicionar_node(grafo, "BSB", 3, "Brasilia"); // Brasilia
-    adicionar_node(grafo, "SSA", 4, "Salvador"); // Salvador
-    adicionar_node(grafo, "CNF", 5, "Belo Horizonte"); //Belo Horizonte
+    adicionar_node(grafo, "BSB", 3, "Brasilia");       // Brasilia
+    adicionar_node(grafo, "SSA", 4, "Salvador");       // Salvador
+    adicionar_node(grafo, "CNF", 5, "Belo Horizonte"); // Belo Horizonte
 
     int op;
-    do {
+    do
+    {
         printf("\n---------------------------------\n");
         printf("\nEscolha uma opcao:\n");
         printf("[1] Registrar novo aeroporto;\n");
@@ -28,17 +30,19 @@ int main() {
         printf("[5] Listar possiveis trajetos que passam por um aeroporto;\n");
         printf("[0] Sair.\n");
         printf("Opcao: ");
-        if (scanf("%d", &op) != 1) {
-        printf("Entrada invalida. Certifique-se de digitar um numero.\n");
-        op = 0; // Force exit to prevent infinite loop
-        while (getchar() != '\n'); // Clear buffer
-        continue;
-    }
-        
+        if (scanf("%d", &op) != 1)
+        {
+            printf("Entrada invalida. Certifique-se de digitar um numero.\n");
+            op = 0; // Force exit to prevent infinite loop
+            while (getchar() != '\n')
+                ; // Clear buffer
+            continue;
+        }
+
         switch (op)
         {
         case 1:
-            printf("Registro de aeroporto\n\n"); 
+            printf("Registro de aeroporto\n\n");
             U8 sigla[4];
             U32 codigo;
             char estado[50];
@@ -49,10 +53,13 @@ int main() {
             printf("\nDigite o estado do aeroporto(pode ser abreviacao. Exemplo: Sao Paulo -> SP): ");
             scanf("%s", estado);
 
-            if(adicionar_node(grafo, sigla, codigo, estado)) {
+            if (adicionar_node(grafo, sigla, codigo, estado))
+            {
                 printf("eba :3 ta tendo %s \n", sigla);
                 listaAeroportos(grafo);
-            } else {
+            }
+            else
+            {
                 printf("Deu erro :c\n");
             }
             break;
@@ -66,34 +73,38 @@ int main() {
             printf("Digite o codigo do aeroporto de destino: ");
             scanf("%u", &destino);
             Relacionamento rel = {id, origem, destino};
-            if (adicionar_rel(grafo, rel)) {
+            if (adicionar_rel(grafo, rel))
+            {
                 printf("ta tendo :3\n");
-            } else {
+            }
+            else
+            {
                 printf("noggers\n");
             }
             break;
         case 3:
-           /*printf("Remocao de voo\n\n");
-           printf("Digite o codigo do voo a ser removido: ");
-              scanf("%u", &codigo);
-            Relacionamento remover = {0, 
-                codigo,
-                 0}; 
-            if (remove_rel(grafo, remover)) {
-                printf("comi");
-            } else {
-                printf("nao existe explodiu");
-            }*/
-           printf("Remocao de voo não implementada\n\n"); //ta implementada eu so fui burra nao consegui fazer funcionar(provavelmente o do augusto vai dar certo espero)
+            /*printf("Remocao de voo\n\n");
+            printf("Digite o codigo do voo a ser removido: ");
+               scanf("%u", &codigo);
+             Relacionamento remover = {0,
+                 codigo,
+                  0};
+             if (remove_rel(grafo, remover)) {
+                 printf("comi");
+             } else {
+                 printf("nao existe explodiu");
+             }*/
+            printf("Remocao de voo não implementada\n\n"); // ta implementada eu so fui burra nao consegui fazer funcionar(provavelmente o do augusto vai dar certo espero)
             break;
         case 4:
             printf("Listar voos que partem de um aeroporto\n\n");
             U32 origem_codigo;
             printf("Digite o codigo do aeroporto de origem: ");
             scanf("%u", &origem_codigo);
-            if (!busca_og(grafo, origem_codigo)) {
+            if (!busca_og(grafo, origem_codigo))
+            {
                 printf("Nenhum voo encontrado com origem no aeroporto especificado.\n");
-            } 
+            }
             break;
         case 5:
             /* Listar voos passando */
