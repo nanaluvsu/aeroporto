@@ -166,6 +166,41 @@ bool remove_rel(Grafo *grafo, Relacionamento rel)
     return false;
 }*/
 
+bool remover_rel(Grafo* grafo, Relacionamento rel) {
+    for (U32 i = 0; i < grafo->qtd_nodes; i++) { //itera os nós
+        if (grafo->nodes[i].codigo == rel.origem) { //se encontrar a origem
+            for (U32 j = 0; j < grafo->qtd_nodes; j++) { //itera a matriz
+                if (grafo->nodes[j].codigo == rel.destino) { //se encontrar o destino
+                    if (grafo->matriz_adjacencia[i][j] == rel.id) {
+                        grafo->matriz_adjacencia[i][j] = 0; 
+                        grafo->matriz_adjacencia[j][i] = 0; // remove o voo da matriz de adjacência
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
+
+Relacionamento cade(Grafo* grafo, U32 id) {
+    Relacionamento rel;
+    rel.id = 0; // Valor padrão para indicar que não encontrou
+
+    for (U32 i = 0; i < grafo->qtd_nodes; i++) {
+        for (U32 j = 0; j < grafo->qtd_nodes; j++) { //itera a matriz
+            if (grafo->matriz_adjacencia[i][j] == id) { //se encontrar
+                rel.id = id;
+                rel.origem = grafo->nodes[i].codigo;
+                rel.destino = grafo->nodes[j].codigo;
+                return rel; //retorna o relacionamento encontrado
+            }
+        }
+    }
+
+    return rel;
+}
+
 static void listaAeroportos(Grafo *grafo)
 {
     if (!grafo || grafo->qtd_nodes == 0)

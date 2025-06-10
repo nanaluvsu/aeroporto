@@ -30,14 +30,16 @@ int main()
         printf("[5] Listar possiveis trajetos que passam por um aeroporto;\n");
         printf("[0] Sair.\n");
         printf("Opcao: ");
-        if (scanf("%d", &op) != 1)
+        /*if (scanf("%d", &op) != 1)
         {
             printf("Entrada invalida. Certifique-se de digitar um numero.\n");
             op = 0; // Force exit to prevent infinite loop
             while (getchar() != '\n')
                 ; // Clear buffer
             continue;
-        }
+        }*/
+
+        scanf("%d", &op);
 
         switch (op)
         {
@@ -83,18 +85,27 @@ int main()
             }
             break;
         case 3:
-            /*printf("Remocao de voo\n\n");
+            printf("Remocao de voo\n\n");
             printf("Digite o codigo do voo a ser removido: ");
-               scanf("%u", &codigo);
-             Relacionamento remover = {0,
-                 codigo,
-                  0};
-             if (remove_rel(grafo, remover)) {
-                 printf("comi");
-             } else {
-                 printf("nao existe explodiu");
-             }*/
-            printf("Remocao de voo não implementada\n\n"); // ta implementada eu so fui burra nao consegui fazer funcionar(provavelmente o do augusto vai dar certo espero)
+            scanf("%u", &codigo);
+            Relacionamento remover = cade(grafo, codigo);
+            if (remover.id != 0)
+            {
+                if (remover_rel(grafo, remover))
+                {
+                    printf("comi :3\n");
+                }
+                else
+                {
+                    printf("explodiu\n");
+                }
+            }
+            else
+            {
+                printf("nao ta tendo\n");
+            }
+
+            // printf("Remocao de voo não implementada\n\n"); // ta implementada eu so fui burra nao consegui fazer funcionar(provavelmente o do augusto vai dar certo espero)
             break;
         case 4:
             printf("Listar voos que partem de um aeroporto\n\n");
