@@ -93,12 +93,26 @@ static void listaVoos(Grafo* grafo) {
 
 
 static removerGrafo(Grafo* grafo) {
+    // Verifica se o ponteiro pro grafo é nulo pra nn liberar memória de uma coisa que nn existe
     if (!grafo) return;
 
-    for (U32 i = 0; i < grafo->total_nodes; i++) {
-        free(grafo->matriz_adjacencia[i]);
+    // Verifica se a matriz de adjacência foi alocada
+    if (grafo->matriz_adjacencia) {
+        // Libera cada linha da matriz (ponteiro U32*)
+        for (U32 i = 0; i < grafo->total_nodes; i++) {
+            if (grafo->matriz_adjacencia[i]) {
+                free(grafo->matriz_adjacencia[i]); // Libera a linha i
+            }
+        }
+        // Libera as colunas da matriz
+        free(grafo->matriz_adjacencia);
     }
-    free(grafo->matriz_adjacencia);
-    free(grafo->nodes);
+
+    // Verifica se o vetor de nodes (aeroportos) foi alocado
+    if (grafo->nodes) {
+        free(grafo->nodes); // libera o vetor de nodes
+    }
+
+    // libera o grafo
     free(grafo);
-} // função de apoio para remover o grafo (eu não quero ficar com minha memória toda xoxa :3)   
+}// função de apoio para remover o grafo (eu não quero ficar com minha memória toda xoxa :3)   
