@@ -10,40 +10,74 @@ int main() {
         printf("Erro ao criar o grafo.\n");
         return 1;
     }
-    printf("Estrutura e Recuperação de Dados II\nTrabalho de Grafos.\n\n");
-
-    printf("Escolha uma opção:\n");
-    printf("[1] Registrar novo aeroporto;\n");
-    printf("[2] Registrar novo voo entre aeroportos;\n"); //através do número do voo e dos códigos dos aeroportos de origem e destino
-    printf("[3] Remover voo;\n"); //através do número
-    printf("[4] Listar voos que partem de um aeroporto;\n"); //listar número e nome da cidade de destino
-    printf("[5] Listar possíveis trajetos que passam por um aeroporto;\n"); //não apenas chegar no aeroporto, mas também passar por ele
-    printf("[0] Sair.\n");
+    printf("Estrutura e Recuperacao de Dados II\nTrabalho de Grafos.\n\n");
+    adicionar_node(grafo, "GRU", 1); // adicionando aeroportos eba(esse é de SP)
+    adicionar_node(grafo, "GIG", 2); // RJ
+    adicionar_node(grafo, "BSB", 3); // Brasilia
+    adicionar_node(grafo, "SSA", 4); // Salvador
+    adicionar_node(grafo, "CNF", 5); //Belo Horizonte
 
     int op;
-    scanf("%d", &op);
-    switch (op)
-    {
-    case 1:
-        /* Reg aeroporto */
-        break;
-    case 2:
-        /* Reg voo */
-        break;
-    case 3:
-        /* Remover voo */
-        break;
-    case 4:
-        /* Listar voos partindo */
-        break;
-    case 5:
-        /* Listar voos passando */
-        break;
-    case 0:
-        exit(0);
-        break;
-    default:
-        break;
-    }
+    do {
+        printf("\nEscolha uma opcao:\n");
+        printf("[1] Registrar novo aeroporto;\n");
+        printf("[2] Registrar novo voo entre aeroportos;\n");
+        printf("[3] Remover voo;\n");
+        printf("[4] Listar voos que partem de um aeroporto;\n");
+        printf("[5] Listar possiveis trajetos que passam por um aeroporto;\n");
+        printf("[0] Sair.\n");
+
+        scanf("%d", &op);
+        
+        switch (op)
+        {
+        case 1:
+            printf("Registro de aeroporto\n\n"); 
+            U8 sigla[4];
+            U32 codigo;
+            printf("Digite a sigla do aeroporto: ");
+            scanf("%s", sigla);
+            printf("\nDigite o codigo do aeroporto: ");
+            scanf("%u", &codigo);
+            if(adicionar_node(grafo, sigla, codigo)) {
+                printf("eba :3 ta tendo %s \n", sigla);
+                listaAeroportos(grafo);
+            } else {
+                printf("Deu erro :c\n");
+            }
+            break;
+        case 2:
+            printf("Registro de voo\n\n");
+            U32 origem, destino;
+            printf("Digite o codigo do aeroporto de origem: ");
+            scanf("%u", &origem);
+            printf("Digite o codigo do aeroporto de destino: ");
+            scanf("%u", &destino);
+            if (adicionar_rel(grafo, origem, destino)) {
+                printf("ta tendo :3\n");
+                listaVoos(grafo);
+            } else {
+                printf("noggers\n");
+            }
+            break;
+        case 3:
+            /* Remover voo */
+            break;
+        case 4:
+            /* Listar voos partindo */
+            break;
+        case 5:
+            /* Listar voos passando */
+            break;
+        case 0:
+            printf("tchau :(\n");
+            break;
+        default:
+            printf("Opcao invalida!\n");
+            break;
+        }
+    } while (op != 0);
+
     removerGrafo(grafo);
+    return 0;
 }

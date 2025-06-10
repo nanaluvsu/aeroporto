@@ -45,6 +45,51 @@ bool adicionar_node(Grafo* grafo, char* sigla, U32 cod) {
     
 }
 
+bool adicionar_rel(Grafo* grafo, U32 origem, U32 destino) {
+    for (U32 i = 0; i < grafo->qtd_nodes; i++) {
+        if (grafo->nodes[i].codigo == origem) {
+            for (U32 j = 0; j < grafo->qtd_nodes; j++) {
+                if (grafo->nodes[j].codigo == destino) {
+                    //existe o nó de origem e destino, então adiciona a relação
+                    grafo->matriz_adjacencia[i][j] = 1; 
+                    grafo->matriz_adjacencia[j][i] = 1;
+                    return true; 
+                }
+            }
+        }
+    }
+}
+
+static void listaAeroportos(Grafo* grafo) {
+    if (!grafo || grafo->qtd_nodes == 0) {
+        printf("Nenhum aeroporto cadastrado.\n");
+        return;
+    }
+    printf("Lista:\n");
+    for (U32 i = 0; i < grafo->qtd_nodes; i++) {
+        printf("sigla: %s, codigo: %u\n", grafo->nodes[i].sigla, grafo->nodes[i].codigo);
+    }
+}
+
+static void listaVoos(Grafo* grafo) {
+    if (!grafo || grafo->qtd_nodes == 0) {
+        printf("Nenhum voo cadastrado.\n");
+        return;
+    }
+    printf("Lista de todos os voos:\n");
+    for (U32 i = 0; i < grafo->qtd_nodes; i++) {
+        for (U32 j = 0; j < grafo->qtd_nodes; j++) {
+            if (grafo->matriz_adjacencia[i][j] == 1) {
+                printf("%s (%u) -> %s(%u)\n", 
+                       grafo->nodes[i].sigla, grafo->nodes[i].codigo,
+                       grafo->nodes[j].sigla, grafo->nodes[j].codigo);
+            }
+        }
+    }
+}
+
+
+
 
 
 static removerGrafo(Grafo* grafo) {
@@ -56,4 +101,4 @@ static removerGrafo(Grafo* grafo) {
     free(grafo->matriz_adjacencia);
     free(grafo->nodes);
     free(grafo);
-} // função de apoio para remover o grafo (eu não quero ficar com minha memória toda xoxa :3)
+} // função de apoio para remover o grafo (eu não quero ficar com minha memória toda xoxa :3)   
