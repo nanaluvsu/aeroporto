@@ -133,62 +133,29 @@ bool busca_og(Grafo *grafo, U32 origem_codigo)
         printf("Nenhum aeroporto encontrado com o código especificado.\n");
         return false;
     }
-
-    if (!encontrou)
-    {
-        printf("Nenhum voo encontrado com origem no aeroporto especificado.\n");
-    }
     return encontrou;
 }
-/*
 
+bool remover_rel(Grafo* grafo, Relacionamento rel) {
+    if (!grafo || grafo->qtd_nodes == 0) return false; // Se o grafo não existir ou não tiver nós não faz
 
-bool remove_rel(Grafo *grafo, Relacionamento rel)
-{
-    for (U32 i = 0; i < grafo->qtd_nodes; i++)
-    {
-        if (grafo->nodes[i].codigo == rel.origem)
-        {
-            for (U32 j = 0; j < grafo->qtd_nodes; j++)
-            {
-                if (grafo->nodes[j].codigo == rel.destino)
-                {
-                    if (grafo->matriz_adjacencia[i][j] == rel.id)
-                    {
-                        grafo->matriz_adjacencia[i][j] = 0;
-                        grafo->matriz_adjacencia[j][i] = 0; // remove o voo da matriz de adjacência
-                        printf("engoli\n");
-                        return true;
-                    }
-                }
-            }
-        }
+    U32 i_origem = -1, i_destino = -1; //definindo i_origem e i_destino como -1, que é um valor inválido para índices
+
+    // Reaproveitei o for pra procurar agora os nós informados 
+    for (U32 i = 0; i < grafo->qtd_nodes; i++) {
+        if (grafo->nodes[i].codigo == rel.origem) i_origem = i;
+        if (grafo->nodes[i].codigo == rel.destino) i_destino = i;
     }
-    printf("Voo nao encontrado ou ID incorreto.\n");
-    return false;
-}*/
-//meu metodo nao tava funcionando, entao rezei e joguei pro augusto isso
-//no fim nao deu certo mas arrumei o dele e ta tendo
-bool remover_rel(Grafo *grafo, Relacionamento rel)
-{
-    for (U32 i = 0; i < grafo->qtd_nodes; i++)
-    { // itera os nós
-        if (grafo->nodes[i].codigo == rel.origem)
-        { // se encontrar a origem
-            for (U32 j = 0; j < grafo->qtd_nodes; j++)
-            { // itera a matriz
-                if (grafo->nodes[j].codigo == rel.destino)
-                { // se encontrar o destino
-                    if (grafo->matriz_adjacencia[i][j] == rel.id)
-                    {
-                        grafo->matriz_adjacencia[i][j] = 0;
-                        grafo->matriz_adjacencia[j][i] = 0; // remove o voo da matriz de adjacência
-                        return true;
-                    }
-                }
-            }
-        }
+
+    // Se não encontrar um dos dois nós ele retorna falso pq nn tem o aeroporto cadastrado
+    if (i_origem == (U32)-1 || i_destino == (U32)-1) {
+        return false;
     }
+
+    // Zera as entradas da matriz, removendo assim o voo
+    grafo->matriz_adjacencia[i_origem][i_destino] = 0;
+    grafo->matriz_adjacencia[i_destino][i_origem] = 0;
+
     return true;
 }
 
@@ -244,28 +211,52 @@ static void removerGrafo(Grafo *grafo)
 } // função de apoio para remover o grafo (eu não quero ficar com minha memória toda xoxa :3)
 
 bool busca_trajeto(
-  Grafo* grafo, 
-  U32 curr, 
-  U32 destino, 
-  U32* path, 
-  U32* pathLen,
-  U32* mapVis
+    Grafo* grafo, 
+    U32 curr, 
+    U32 destino, 
+    U32* path, 
+    U32* pathLen,
+    U32* mapVis
 ){
-    mapVis[curr] = 1;
-    path[*pathLen] = curr;
-    (*pathLen)++;
 
-    if (curr == destino) {
-      return true;
-    }
-
-    for(U32 i = 0;i<grafo->qtd_nodes;i++){
-      if(grafo->matriz_adjacencia[curr][i] != 0 && !mapVis[i]){
-        if(busca_trajeto(grafo, i, destino, path, pathLen, mapVis)){
-          return true;
+    U32 currIndex = -1, destinoIndex = -1; // implementando novamente a definicao de valores invalidos como indice
+    for (U32 i = 0; i < grafo->qtd_nodes; i++) {
+        if (grafo->nodes[i].codigo == curr) { // procura o índice do nó atual
+            currIndex = i; // se encontrar, define o índice do nó atual como i (i é o índice do nó no vetor de nós)
         }
-      }
+        if (grafo->nodes[i].codigo == destino) { // mesma coisa mas pro destino
+            destinoIndex = i;
+        }
+    } //num geral, esse for percorre o vetor de nós do grafo e procura os índices dos nós atual e destino
+
+    // oi bia oq faltava na sua funcao era so encontrar os indices, agora ta tendo :3
+    if (currIndex == -1 || destinoIndex == -1) { // se o for não preencher os índices, significa que o nó atual ou destino não existe(ou nao foi encontrado por algum erro no codigo)
+        return false;
+    } 
+
+    mapVis[currIndex] = 1; //oi bia acho q vc viu q a gente trocou pra usar o index aqui
+    path[*pathLen] = curr; // adiciona o nó atual ao caminho
+    (*pathLen)++; // aumenta o tamanho do caminho
+
+    
+    if (currIndex == destinoIndex) {
+        printf("Trajeto encontrado: "); 
+        for (U32 i = 0; i < *pathLen; i++) {
+            printf("%u ", path[i]);
+        }
+        printf("\n");
+        return true;
+    } //seu codigo encontrava, mas nao exibia o caminho, entao eu fiz o print com o for e etc e tals
+
+    for (U32 i = 0; i < grafo->qtd_nodes; i++) {
+        if (grafo->matriz_adjacencia[currIndex][i] != 0 && !mapVis[i]) {
+            if (busca_trajeto(grafo, grafo->nodes[i].codigo, destino, path, pathLen, mapVis)) {
+                return true;
+            }
+        }
     }
     (*pathLen)--;
     return false;
-};
+
+    //o resto ta igual
+}

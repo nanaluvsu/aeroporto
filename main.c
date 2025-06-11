@@ -127,17 +127,8 @@ int main()
             U32* path = malloc(grafo->qtd_nodes * sizeof(U32)); // Talvez seja memoria demais(?)
             U32 lenVis = 0; // Tamanho do caminho
             U32* mapVis = malloc(grafo->qtd_nodes * sizeof(U32)); 
-            U32 len = 0; // Tamanho do caminho
-            if (busca_trajeto(grafo, origem2, destino1, path, &lenVis, mapVis))
-            {
-                printf("Trajeto encontrado: ");
-                for (U32 i = 0; i < len; i++)
-                {
-                    printf("%u ", path[i]);
-                }
-                printf("\n");
-            }
-            else
+
+            if (!busca_trajeto(grafo, origem2, destino1, path, &lenVis, mapVis))
             {
                 printf("Nenhum trajeto encontrado entre os aeroportos especificados.\n");
             }
