@@ -3,20 +3,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-Grafo *criar_grafo()
-{
+Grafo *criar_grafo() {
 
     Grafo *grafo = (Grafo *)malloc(sizeof(Grafo));
     if (!grafo)
-        return NULL;
+        return NULL; //se, de algum jeito der erro aqui, retorna falso
 
     grafo->total_nodes = 5; // define o número total de nós como 5, pois inicialmente o grafo terá 5 nós
     grafo->qtd_nodes = 0;
 
     // inicializa a matriz de adjacência com zeros
     grafo->matriz_adjacencia = (U32 **)malloc(grafo->total_nodes * sizeof(U32 *));
-    for (int i = 0; i < grafo->total_nodes; i++)
-    {
+    for (int i = 0; i < grafo->total_nodes; i++) {
         grafo->matriz_adjacencia[i] = (U32 *)malloc(grafo->total_nodes * sizeof(U32));
         for (int j = 0; j < grafo->total_nodes; j++)
         {
@@ -28,8 +26,7 @@ Grafo *criar_grafo()
     return grafo;
 } // cria um grafo vazio
 
-bool adicionar_node(Grafo *grafo, char *sigla, U32 cod, char *cidade)
-{
+bool adicionar_node(Grafo *grafo, char *sigla, U32 cod, char *cidade) {
     for (U32 i = 0; i < grafo->qtd_nodes; i++)
     {
         if (grafo->nodes[i].codigo == cod)
@@ -37,8 +34,9 @@ bool adicionar_node(Grafo *grafo, char *sigla, U32 cod, char *cidade)
             return false;
         }
     }
-    grafo->qtd_nodes++;                                                            // incrementa a quantidade de nós do grafo
-    grafo->nodes = (Node *)realloc(grafo->nodes, grafo->qtd_nodes * sizeof(Node)); // realoca o vetor de 'nodes', definindo o tamanho dele como o número de nós que ele tem
+    grafo->qtd_nodes++; // incrementa a quantidade de nós do grafo
+    grafo->nodes = (Node *)realloc(grafo->nodes,
+                                   grafo->qtd_nodes * sizeof(Node)); // realoca o vetor de 'nodes', definindo o tamanho dele como o número de nós que ele tem
 
     grafo->nodes[grafo->qtd_nodes - 1].sigla = sigla;   // adiciona o novo nó ao vetor de nós
     grafo->nodes[grafo->qtd_nodes - 1].codigo = cod;    // define o código do nó
@@ -75,8 +73,7 @@ bool adicionar_node(Grafo *grafo, char *sigla, U32 cod, char *cidade)
     return true;                     // se ele n morrer ele retorna true
 }
 
-bool adicionar_rel(Grafo *grafo, Relacionamento rel)
-{
+bool adicionar_rel(Grafo *grafo, Relacionamento rel) {
     printf("rel.id: %u\n", rel.id); // talvez desse errado entao fiz ele mostrar o id(nao muda o codigo so serve pra testar msm)
     for (U32 i = 0; i < grafo->qtd_nodes; i++)
     {
@@ -98,11 +95,10 @@ bool adicionar_rel(Grafo *grafo, Relacionamento rel)
     return false;
 }
 
-bool busca_og(Grafo *grafo, U32 origem_codigo)
-{
+bool busca_og(Grafo *grafo, U32 origem_codigo) {
     if (!grafo || grafo->qtd_nodes == 0)
     {
-        printf("Nenhum voo cadastrado.\n"); //se nao tem no obviamente nao tem voo ne
+        printf("Nenhum voo cadastrado.\n"); // se nao tem no obviamente nao tem voo ne
         return false;
     }
 
@@ -167,10 +163,9 @@ bool remove_rel(Grafo *grafo, Relacionamento rel)
     printf("Voo nao encontrado ou ID incorreto.\n");
     return false;
 }*/
-//meu metodo nao tava funcionando, entao rezei e joguei pro augusto isso
-//no fim nao deu certo mas arrumei o dele e ta tendo
-bool remover_rel(Grafo *grafo, Relacionamento rel)
-{
+// meu metodo nao tava funcionando, entao rezei e joguei pro augusto isso
+// no fim nao deu certo mas arrumei o dele e ta tendo
+bool remover_rel(Grafo *grafo, Relacionamento rel) {
     for (U32 i = 0; i < grafo->qtd_nodes; i++)
     { // itera os nós
         if (grafo->nodes[i].codigo == rel.origem)
@@ -192,8 +187,7 @@ bool remover_rel(Grafo *grafo, Relacionamento rel)
     return true;
 }
 
-Relacionamento cade(Grafo *grafo, U32 id)
-{
+Relacionamento cade(Grafo *grafo, U32 id) {
     Relacionamento rel;
     rel.id = 0; // Valor padrão para indicar que não encontrou
 
@@ -214,8 +208,26 @@ Relacionamento cade(Grafo *grafo, U32 id)
     return rel;
 }
 
-static void listaAeroportos(Grafo *grafo)
-{
+bool busca_trajeto(Grafo* grafo, U32 curr, U32 destino, U32* mapa, U32* path, U32* len) {
+    mapa[curr] = 1; // marca o nó atual como visitado
+    path[*len] = curr;
+    (*len)++;
+
+    if (curr == destino) {
+        return true;
+    }
+
+    for (int i = 0; i < grafo->qtd_nodes; i++) {
+        if(grafo->matriz_adjacencia[curr][i] != 0 && !mapa[i]) { // se houver um voo e o nó não foi visitado
+            if (busca_trajeto(grafo, i, destino, mapa, path, len)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+static void listaAeroportos(Grafo *grafo) { //ele lista aeroportos chocante ne
     if (!grafo || grafo->qtd_nodes == 0)
     {
         printf("Nenhum aeroporto cadastrado.\n");
@@ -228,8 +240,7 @@ static void listaAeroportos(Grafo *grafo)
     }
 }
 
-static void removerGrafo(Grafo *grafo)
-{
+static void removerGrafo(Grafo *grafo) { //nem te conto oq faz
     if (!grafo)
         return;
 

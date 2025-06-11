@@ -119,17 +119,18 @@ int main()
             break;
         case 5: 
             printf("Busca de trajeto\n\n");
-            /*U32 origem2, destino1;
+            U32 origem2, destino1;
             printf("Digite o codigo do aeroporto de origem: ");
             scanf("%u", &origem2);
             printf("Digite o codigo do aeroporto de destino: ");
             scanf("%u", &destino1);
             U32* path = malloc(grafo->qtd_nodes * sizeof(U32)); // Talvez seja memoria demais(?)
-            U32 len = 0; // Tamanho do caminho
-            if (busca_trajeto(grafo, origem2, destino1, path, &len))
+            U32 lenVis = 0; // Tamanho do caminho
+            U32* mapVis = malloc(grafo->qtd_nodes * sizeof(U32)); 
+            if (busca_trajeto(grafo, origem2, destino1, path, &lenVis, mapVis))
             {
                 printf("Trajeto encontrado: ");
-                for (U32 i = 0; i < len; i++)
+                for (U32 i = 0; i < lenVis; i++)
                 {
                     printf("%u ", path[i]);
                 }
@@ -138,8 +139,9 @@ int main()
             else
             {
                 printf("Nenhum trajeto encontrado entre os aeroportos especificados.\n");
-            }*/
-            printf("Funcao nao implementada.");
+            }
+            free(path);
+      
             break;
         case 0:
             printf("tchau :(\n");
