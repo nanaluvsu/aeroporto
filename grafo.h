@@ -31,5 +31,5 @@ Grafo* criar_grafo();
 bool adicionar_node(Grafo* grafo, char* sigla, U32 codigo, char* cidade);
 bool adicionar_rel(Grafo* grafo, Relacionamento rel);
 bool busca_og(Grafo* grafo, U32 origem); //voos que partem de um aeroporto
-bool busca_trajeto(Grafo* grafo, U32 curr, U32 destino, U32* path, U32* len); //voos que partem de um aeroporto e atinja outro. Importante mencionar que
+bool busca_trajeto(Grafo* grafo, U32 curr, U32 destino, U32* path, U32* pathLen,U32* mapVis); //voos que partem de um aeroporto e atinja outro. Importante mencionar que
 // passam significa que o voo nao necessariamente vai até um aeroporto, mas que ele passa por ele

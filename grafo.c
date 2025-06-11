@@ -242,3 +242,30 @@ static void removerGrafo(Grafo *grafo)
     free(grafo);
     return;
 } // função de apoio para remover o grafo (eu não quero ficar com minha memória toda xoxa :3)
+
+bool busca_trajeto(
+  Grafo* grafo, 
+  U32 curr, 
+  U32 destino, 
+  U32* path, 
+  U32* pathLen,
+  U32* mapVis
+){
+    mapVis[curr] = 1;
+    path[*pathLen] = curr;
+    (*pathLen)++;
+
+    if (curr == destino) {
+      return true;
+    }
+
+    for(U32 i = 0;i<grafo->qtd_nodes;i++){
+      if(grafo->matriz_adjacencia[curr][i] != 0 && !mapVis[i]){
+        if(busca_trajeto(grafo, i, destino, path, pathLen, mapVis)){
+          return true;
+        }
+      }
+    }
+    (*pathLen)--;
+    return false;
+};
