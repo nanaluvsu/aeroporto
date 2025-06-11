@@ -28,12 +28,14 @@ Grafo *criar_grafo()
     return grafo;
 } // cria um grafo vazio
 
-bool adicionar_node(Grafo *grafo, char *sigla, U32 cod, char *cidade)
+bool adicionar_node(Grafo *grafo, char *sigla, char *cidade)
 {
+    printf("Oi");
     for (U32 i = 0; i < grafo->qtd_nodes; i++)
     {
-        if (grafo->nodes[i].codigo == cod)
+        if (strcmp(grafo->nodes[i].sigla, sigla))
         {
+            printf("Oiiii");
             return false;
         }
     }
@@ -41,14 +43,15 @@ bool adicionar_node(Grafo *grafo, char *sigla, U32 cod, char *cidade)
     grafo->nodes = (Node *)realloc(grafo->nodes, grafo->qtd_nodes * sizeof(Node)); // realoca o vetor de 'nodes', definindo o tamanho dele como o número de nós que ele tem
 
     grafo->nodes[grafo->qtd_nodes - 1].sigla = sigla;   // adiciona o novo nó ao vetor de nós
-    grafo->nodes[grafo->qtd_nodes - 1].codigo = cod;    // define o código do nó
     grafo->nodes[grafo->qtd_nodes - 1].cidade = cidade; // define a cidade do nó
 
     // Realocação da matriz de adjacência
     U32 novo_total = grafo->total_nodes + 1;
     grafo->matriz_adjacencia = (U32 **)realloc(grafo->matriz_adjacencia, novo_total * sizeof(U32 *));
-    if (!grafo->matriz_adjacencia)
+    if (!grafo->matriz_adjacencia) {
+        printf("Oi");
         return false; // se a realocação falhar, retorna falso
+    }
     for (U32 i = 0; i < novo_total; i++)
     {
         if (i >= grafo->total_nodes)
@@ -77,18 +80,17 @@ bool adicionar_node(Grafo *grafo, char *sigla, U32 cod, char *cidade)
 
 bool adicionar_rel(Grafo *grafo, Relacionamento rel)
 {
-    printf("rel.id: %u\n", rel.id); // talvez desse errado entao fiz ele mostrar o id(nao muda o codigo so serve pra testar msm)
-    for (U32 i = 0; i < grafo->qtd_nodes; i++)
+    for (U32 i = 0; i < grafo->qtd_nodes; i++) //itera nodes
     {
 
-        if (grafo->nodes[i].codigo == rel.origem)
+        if (strcmp(grafo->nodes[i].sigla, rel.origem) == 0) //se encontrar a origem
         {
-            for (U32 j = 0; j < grafo->qtd_nodes; j++)
+            for (U32 j = 0; j < grafo->qtd_nodes; j++) //itera
             {
-                if (grafo->nodes[j].codigo == rel.destino)
+                if (strcmp(grafo->nodes[j].sigla, rel.destino) == 0) //se destino 
                 {
                     grafo->matriz_adjacencia[i][j] = rel.id;
-                    grafo->matriz_adjacencia[j][i] = rel.id;
+                    grafo->matriz_adjacencia[j][i] = rel.id; //ela e bissexual mds...
                     printf("Voo %u: %s-> Destino %s\n", rel.id, grafo->nodes[i].sigla, grafo->nodes[j].sigla);
                     return true;
                 }
@@ -98,31 +100,31 @@ bool adicionar_rel(Grafo *grafo, Relacionamento rel)
     return false;
 }
 
-bool busca_og(Grafo *grafo, U32 origem_codigo)
+bool busca_og(Grafo *grafo, char* origem)
 {
     if (!grafo || grafo->qtd_nodes == 0)
     {
-        printf("Nenhum voo cadastrado.\n"); //se nao tem no obviamente nao tem voo ne
+        printf("Nenhum voo cadastrado.\n"); //se nao tem node obviamente nao tem voo ne
         return false;
     }
-
     bool encontrou = false;
     bool origem_existe = false;
     for (U32 i = 0; i < grafo->qtd_nodes; i++)
     {
-        if (grafo->nodes[i].codigo == origem_codigo)
+        if (strcmp(grafo->nodes[i].sigla, origem) == 0) //se encontrar origem, define var como true
         {
-            origem_existe = true;
-            printf("Voos com origem em %s (%u):\n", grafo->nodes[i].sigla, origem_codigo);
+            origem_existe = true; 
+            printf("Voos com origem em %s (%s):\n", grafo->nodes[i].sigla, origem);
             for (U32 j = 0; j < grafo->qtd_nodes; j++)
             {
-                if (grafo->matriz_adjacencia[i][j] != 0)
+                if (grafo->matriz_adjacencia[i][j] != 0) //se existir
                 {
-                    printf("Destino: %s (%u), ID do voo: %u\n",
-                           grafo->nodes[j].sigla, grafo->nodes[j].codigo,
+                    printf("Destino: %s (%s), ID do voo: %s\n", //retorna detalhes do voo
+                           grafo->nodes[j].sigla, grafo->nodes[j].sigla,
                            grafo->matriz_adjacencia[i][j]);
-                    encontrou = true;
+                    encontrou = true; 
                 }
+
             }
             break;
         }
@@ -143,8 +145,8 @@ bool remover_rel(Grafo* grafo, Relacionamento rel) {
 
     // Reaproveitei o for pra procurar agora os nós informados 
     for (U32 i = 0; i < grafo->qtd_nodes; i++) {
-        if (grafo->nodes[i].codigo == rel.origem) i_origem = i;
-        if (grafo->nodes[i].codigo == rel.destino) i_destino = i;
+        if (grafo->nodes[i].sigla == rel.origem) i_origem = i; //define o indice de origem como o node atual
+        if (grafo->nodes[i].sigla == rel.destino) i_destino = i; //defone o indice de destino como o node atual
     }
 
     // Se não encontrar um dos dois nós ele retorna falso pq nn tem o aeroporto cadastrado
@@ -170,9 +172,8 @@ Relacionamento cade(Grafo *grafo, U32 id)
         { // itera a matriz
             if (grafo->matriz_adjacencia[i][j] == id)
             { // se encontrar
-                rel.id = id;
-                rel.origem = grafo->nodes[i].codigo;
-                rel.destino = grafo->nodes[j].codigo;
+                rel.origem = grafo->nodes[i].sigla;
+                rel.destino = grafo->nodes[j].sigla;
                 return rel; // retorna o relacionamento encontrado
             }
         }
@@ -191,7 +192,7 @@ static void listaAeroportos(Grafo *grafo)
     printf("Aeroportos:\n");
     for (U32 i = 0; i < grafo->qtd_nodes; i++)
     {
-        printf("sigla: %s, codigo: %u, estado: %s\n", grafo->nodes[i].sigla, grafo->nodes[i].codigo, grafo->nodes[i].cidade);
+        printf("sigla: %s, codigo: %u, estado: %s\n", grafo->nodes[i].sigla, grafo->nodes[i].sigla, grafo->nodes[i].cidade);
     }
 }
 
@@ -212,19 +213,19 @@ static void removerGrafo(Grafo *grafo)
 
 bool busca_trajeto(
     Grafo* grafo, 
-    U32 curr, 
-    U32 destino, 
-    U32* path, 
+    char* curr, 
+    char* destino, 
+    char* path, 
     U32* pathLen,
     U32* mapVis
 ){
 
     U32 currIndex = -1, destinoIndex = -1; // implementando novamente a definicao de valores invalidos como indice
     for (U32 i = 0; i < grafo->qtd_nodes; i++) {
-        if (grafo->nodes[i].codigo == curr) { // procura o índice do nó atual
+        if (grafo->nodes[i].sigla == curr) { // procura o índice do nó atual
             currIndex = i; // se encontrar, define o índice do nó atual como i (i é o índice do nó no vetor de nós)
         }
-        if (grafo->nodes[i].codigo == destino) { // mesma coisa mas pro destino
+        if (grafo->nodes[i].sigla == destino) { // mesma coisa mas pro destino
             destinoIndex = i;
         }
     } //num geral, esse for percorre o vetor de nós do grafo e procura os índices dos nós atual e destino
@@ -242,7 +243,7 @@ bool busca_trajeto(
     if (currIndex == destinoIndex) {
         printf("Trajeto encontrado: "); 
         for (U32 i = 0; i < *pathLen; i++) {
-            printf("%u ", path[i]);
+            printf("%s", path[i]);
         }
         printf("\n");
         return true;
@@ -250,7 +251,7 @@ bool busca_trajeto(
 
     for (U32 i = 0; i < grafo->qtd_nodes; i++) {
         if (grafo->matriz_adjacencia[currIndex][i] != 0 && !mapVis[i]) {
-            if (busca_trajeto(grafo, grafo->nodes[i].codigo, destino, path, pathLen, mapVis)) {
+            if (busca_trajeto(grafo, grafo->nodes[i].sigla, destino, path, pathLen, mapVis)) {
                 return true;
             }
         }
