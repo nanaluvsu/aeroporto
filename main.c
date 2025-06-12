@@ -70,7 +70,8 @@ int main()
             break;
         case 2:
             printf("Registro de voo\n\n");
-            U32 id, origem, destino;
+            U32 id;
+            char origem[4], destino[4];
             printf("Digite o codigo do voo: ");
             scanf("%u", &id);
             printf("Digite a sigla do aeroporto de origem: ");
@@ -88,11 +89,11 @@ int main()
             }
             break;
         case 3:
-        printf("Remoção de voo\n\n");
-            char sigRemo[4];
-            printf("Digite a sigla do voo a ser removido: ");
-            scanf("%s", &sigRemo);
-            Relacionamento remover = cade(grafo, sigRemo);
+        printf("Remocao de voo\n\n");
+            U32 cod;
+            printf("Digite do voo a ser removido: ");
+            scanf("%u", &cod);
+            Relacionamento remover = cade(grafo, cod);
             if (remover.id != 0)
             {
                 if (remover_rel(grafo, remover))
@@ -115,7 +116,7 @@ int main()
             printf("Listar voos que partem de um aeroporto\n\n");
             char origem1[4];
             printf("Digite a sigla do aeroporto de origem: ");
-            scanf("%s", &origem1);
+            scanf("%s", origem1);
             if (!busca_og(grafo, origem1)) 
             {
                 printf("Nenhum voo encontrado com origem no aeroporto especificado.\n");
@@ -129,14 +130,11 @@ int main()
             scanf("%s", &origem2);
             printf("Digite a sigla do aeroporto de destino: ");
             scanf("%s", &destino1);
-            char* path = malloc(grafo->qtd_nodes * sizeof(char*)); // Talvez seja memoria demais(?)
+            char (*path)[4] = malloc(grafo->qtd_nodes * sizeof(char[4])); // Talvez seja memoria demais(?)
             U32 lenVis = 0; // Tamanho do caminho
             U32* mapVis = malloc(grafo->qtd_nodes * sizeof(U32)); 
 
-            if (!busca_trajeto(grafo, origem2, destino1, path, &lenVis, mapVis))
-            {
-                printf("Nenhum trajeto encontrado entre os aeroportos especificados.\n");
-            }
+            busca_trajeto(grafo, origem2, destino1, path, lenVis, mapVis);
             break;
         case 0:
             printf("tchau :(\n");
