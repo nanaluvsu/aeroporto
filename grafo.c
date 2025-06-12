@@ -79,20 +79,12 @@ bool adicionar_rel(Grafo *grafo, Relacionamento rel)
 {
     for (U32 i = 0; i < grafo->qtd_nodes; i++)
     {
-        printf("iterou1: i = %u, sigla = %s\n", i, grafo->nodes[i].sigla);
-
         if (strcmp(grafo->nodes[i].sigla, rel.origem) == 0)
         {
-            printf("achou origem: %s\n", grafo->nodes[i].sigla);
-
             for (U32 j = 0; j < grafo->qtd_nodes; j++)
             {
-                printf("  iterou2: j = %u, sigla = %s\n", j, grafo->nodes[j].sigla);
-
                 if (strcmp(grafo->nodes[j].sigla, rel.destino) == 0)
                 {
-                    printf("  achou destino: %s\n", grafo->nodes[j].sigla);
-
                     // Protege contra acesso fora da matriz, embora i e j venham do loop
                     if (i < grafo->qtd_nodes && j < grafo->qtd_nodes)
                     {
@@ -104,18 +96,13 @@ bool adicionar_rel(Grafo *grafo, Relacionamento rel)
                     }
                     else
                     {
-                        printf("Erro: índices fora do limite da matriz.\n");
                         return false;
                     }
                 }
             }
-
-            printf("Destino '%s' não encontrado.\n", rel.destino);
             return false; // Parar se origem achada, mas destino não
         }
     }
-
-    printf("Origem '%s' não encontrada.\n", rel.origem);
     return false;
 }
 

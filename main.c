@@ -91,7 +91,7 @@ int main()
         case 3:
         printf("Remocao de voo\n\n");
             U32 cod;
-            printf("Digite do voo a ser removido: ");
+            printf("Digite o codigo do voo a ser removido: ");
             scanf("%u", &cod);
             Relacionamento remover = cade(grafo, cod);
             if (remover.id != 0)
