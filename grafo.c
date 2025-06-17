@@ -242,6 +242,21 @@ bool busca_trajeto(
     return false;
 }
 
+/*
+    Explicando como funciona o método busca_trajeto(baseado em Depth First Search[DFS])
+
+    Primeiro, recebe o aeroporto atual (na primeira iteracao, a origem), o destino, um array para armazenar o caminho e um mapa com os nodes/arestas/aeroportos visitados
+    Para facilitar, os indices sao definidos como -1, inválido para indíces, e depois são preenchidos com os índices dos aeroportos no grafo
+    Em seguida, procura os índices do aeroporto atual e do destino no grafo. Se não encontrar, retorna falso
+    Marca o aeroporto atual como visitado no mapa e copia a sigla do aeroporto atual para o caminho
+    Incrementa o tamanho do caminho
+    Se o aeroporto atual for o destino, imprime o caminho encontrado e libera o aeroporto atual no mapa para outras buscas(através do mapVis[currIndex] = 0)
+    Importante que o retorno seja falso para que o programa continue buscando outros caminhos possíveis, caso existam 
+    Com o retorno sendo true, o programa pararia na primeira rota encontrada, o que não é o desejado
+    em seguida, percorre todos os aeroportos adjacentes ao atual e, se eles não constarem no mapa, chama a função para buscar o trajeto
+    Em conclusão, libera o aeroporto atual no mapa para que outras buscas possam ser feitas
+*/
+
 static void listaAeroportos(Grafo *grafo)
 {
     if (!grafo || grafo->qtd_nodes == 0)
